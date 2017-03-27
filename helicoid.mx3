@@ -1,0 +1,103 @@
+//Material properties//
+//	//	//	//	//	//	//
+//
+Aex = 3.05E-13 //exchange stiffness (J/m)	
+D:= 2.75E-4 //
+Dbulk= D //Bulk Dzyaloshinskii-Moriya strength (J/m^2)
+Msat= 160E3 //Saturation magnetisation (A/m)
+Ku1= -0.8E4 //1st order uniaxial anisotropy (J/m^3)
+anisU=vector(1,0,0) //uniaxial anisotropy direction
+alpha= 0.1 //Landau-Lifshitz damping constant
+
+
+//Define geometry and cell size//
+//	//	//	//	//	//	//
+//
+H:= 18E-9 //Height in meters? sample thickness?
+
+
+Nx:= 64//number of cells in x,y,z
+Ny:= 64//
+Nz:= 64//
+
+//X, Y, Z cell sizes in meters
+X:=H/Nx
+Y:=H/Ny
+Z:=H/Nz
+
+SetGridSize(Nx, Ny, Nz)	//set grid sizes
+SetCellSize(X,Y,Z)	//set cell sizes
+setPBC(10,10,0) //periodic boundary conditions on x,y, 10 reps
+		//of the demag field along x and y
+m=uniform(1,0,0)	//uniform unit magnetisation in x
+
+Bx:=0.0	//Defines the x,y,z components of B
+By:=1.0	//
+Bz:=0.0 //
+
+B_ext=Vector(Bx,By,Bz) //defines the vector B
+
+//	//	//	//	//	//	//
+
+relax() //evolves the energy to the minimum energy state
+
+//setPBC(10,10,10) //not sure why this is here
+//relax() // likewise
+
+save(m)
+///*
+//Not sure what this for loop does, outputs data
+
+for j:=0; j<3; j++{
+	for i:=0; I<Nz; i++{
+		tableAdd(Crop(m.comp(j), Nx/2-1,Nx/2,Ny/2-1,Ny/2,i,i+1))
+		//tableAdd(CropZ(m.comp(j),i,i+1))
+
+	}
+}
+
+//*/
+MaxDt = 1E-12  //sets the max time step the problem solver can take
+
+//Autosave(Crop(m, Nx/2-1, Nx/2, Ny/2-1, Ny/2, 0, Nz, 1E-12))
+a:=0.1
+b:=2.5E-10
+c:=1E-12
+
+fixdt = 2E-14 //sets a fixed timestep, 0 disables fixed step
+
+for i:=0; i<21; i++{
+	tableAutoSave(0)
+	Bz= i*0.1
+	B_ext = vector(0,0,Bz)
+	relax()
+	save(m)
+	tableAutoSave(1E-12)
+	b=2.5E-10 + i*1E-9
+	B_ext=vector(a*exp(-Pow((t-b),2)/(2*Pow(c, 2))),0,Bz)
+	t = i*1E-9
+	run(1E-9) 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
