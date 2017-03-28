@@ -19,11 +19,11 @@ H:= 18E-9 //sample thickness (m)
 Nx:= 2
 Ny:= 2
 Nz:= 128
-
+N:=Nz //cells have to be cubic for demag kernel to work?
 //X, Y, Z cell sizes in meters
-X:=H/Nx
-Y:=H/Ny
-Z:=H/Nz
+X:=H/N
+Y:=H/N
+Z:=H/N
 
 SetGridSize(Nx, Ny, Nz)	//set grid sizes
 SetCellSize(X,Y,Z)	//set cell sizes
@@ -51,7 +51,8 @@ freq:=2e11	//freq term inside sinc for microwave range 2*10^11 Hz
 
 //	Iterate through mag of ext B-field, apply pulse	//
 
-for i:=0; i<=Bx_max; i+=0.05{
+for idx:=0; idx<=20*Bx_max; idx++{
+	i:=idx/20 
 	Bx=i*0.77	//since we have h/HD=i and HD~0.77T
 	By=0.0		//resets the y comp of the B field
 	if i<0.45{	//load the pre critical field helicoid
@@ -62,7 +63,7 @@ for i:=0; i<=Bx_max; i+=0.05{
 	}
 	B_ext=Vector(Bx,By,Bz)	//defines the vector B	
 	minimize()		//evolves the energy to the minimum energy state
-
+	save(m)
 	for j:=0; j<=880; j++{	//880 repetitions at 5e-13 takes from 0 to 440ps
 				//this is when the sinc fctn is 0 after local min
 				//10 wavelengths
