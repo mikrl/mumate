@@ -27,7 +27,7 @@ Z:=H/Nz
 
 SetGridSize(Nx, Ny, Nz)	//set grid sizes
 SetCellSize(X,Y,Z)	//set cell sizes
-setPBC(128,128,0)	//periodic boundary conditions on x,y, 128 reps
+setPBC(256,256,0)	//periodic boundary conditions on x,y, 256 reps
 			//of the demag field along x and y
 
 //	//	//	//	//	//
@@ -43,8 +43,8 @@ Bx_max:=1.0
 By_max:=1.0
 Bz_max:=1.0
 
-amp:=10e-2	//amplitude of EM pulse, 10^-2 Tesla
-freq:=1.4985e11	//freq term inside sinc for microwave range 1.4985*10^11 Hz
+amp:=10e-5	//amplitude of EM pulse, 10^-5 Tesla
+freq:=2e11	//freq term inside sinc for microwave range 2*10^11 Hz
 
 //	//	//	//	//	//	//
 
