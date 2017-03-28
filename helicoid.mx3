@@ -36,7 +36,6 @@ setPBC(128,128,0)	//periodic boundary conditions on x,y, 128 reps
 
 EnableDemag=True //turn off for now, will reenable when have data from initial run
 
-m.Loadfile("helicoidzerofield22128.ovf")
 Bx:=0.0	//Defines the x,y,z components of B
 By:=0.0
 Bz:=0.0
@@ -51,21 +50,27 @@ freq:=1.4985e11	//freq term inside sinc for microwave range 1.4985*10^11 Hz
 
 
 //	Iterate through mag of ext B-field, apply pulse	//
-for i:=0; i<=Bx_max; i+=0.1{
 
-	B_ext=Vector(i,By,Bz)	//defines the vector B	
+for i:=0; i<=Bx_max; i+=0.05{
+	Bx=i*0.77	//since we have h/HD=i and HD~0.77T
+	By=0.0		//resets the y comp of the B field
+	if i<0.45{	//load the pre critical field helicoid
+		m.Loadfile("helicoid1.ovf")
+
+	}else{	//when h/HD is at or above the critical field, load the post crit field helicoid	
+		m.Loadfile("helicoid2.ovf")
+	}
+	B_ext=Vector(Bx,By,Bz)	//defines the vector B	
 	minimize()		//evolves the energy to the minimum energy state
 
-	for j:=0; j<=796; j++{	//796 repetitions at 5e-13 takes from 0 to 398ps
+	for j:=0; j<=880; j++{	//880 repetitions at 5e-13 takes from 0 to 440ps
 				//this is when the sinc fctn is 0 after local min
 				//10 wavelengths
 		t:=j*5E-13
-		Bx=i
-		By=sqrt(2/pi)*sinc(freq*(t-2.096E-11))*amp
-		save(m)
-		save(B_ext)
+		By=sqrt(2/pi)*sinc(freq*t)*amp
 		B_ext=Vector(Bx, By, Bz)
 		run(5E-13)
+		save(m)
 	}
 }
 //	//	//	//	//	//	//
