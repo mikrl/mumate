@@ -1,3 +1,4 @@
+Outputformat=OVF2_TEXT
 //	Material properties	//
 
 Aex = 3.05E-13 //exchange stiffness (J/m)	
@@ -33,7 +34,7 @@ setPBC(128,128,0)	//periodic boundary conditions on x,y, 128 reps
 
 //	Define magnetisation and magnetic fields	//
 
-EnableDemag=False //turn off for now, will reenable when have data from initial run
+EnableDemag=True //turn off for now, will reenable when have data from initial run
 
 m.Loadfile("helicoidzerofield22128.ovf")
 Bx:=0.0	//Defines the x,y,z components of B
@@ -44,25 +45,27 @@ By_max:=1.0
 Bz_max:=1.0
 
 amp:=10e-2	//amplitude of EM pulse, 10^-2 Tesla
-freq=1.4985e11	//freq term inside sinc for microwave range 1.4985*10^11 Hz
+freq:=1.4985e11	//freq term inside sinc for microwave range 1.4985*10^11 Hz
 
 //	//	//	//	//	//	//
 
 
 //	Iterate through mag of ext B-field, apply pulse	//
-for i:=Bx; i<=Bx_max; i+=0.1{
+for i:=0; i<=Bx_max; i+=0.1{
 
 	B_ext=Vector(i,By,Bz)	//defines the vector B	
 	minimize()		//evolves the energy to the minimum energy state
 
-	for j:=0; j<=88; j++{	//88 repetitions at 5e-12 takes from 0 to 440ps
-				//this is when the sinc fctn is 0 after local max
+	for j:=0; j<=796; j++{	//796 repetitions at 5e-13 takes from 0 to 398ps
+				//this is when the sinc fctn is 0 after local min
 				//10 wavelengths
-
-		SaveAs(m, "helicoidsincpulse")
-		t=j*5E-12
-		B_ext=Vector(i, sqrt(2/pi)*sinc(freq*t)*amp, Bz)
-		run(5E-12)
+		t:=j*5E-13
+		Bx=i
+		By=sqrt(2/pi)*sinc(freq*(t-2.096E-11))*amp
+		save(m)
+		save(B_ext)
+		B_ext=Vector(Bx, By, Bz)
+		run(5E-13)
 	}
 }
 //	//	//	//	//	//	//
