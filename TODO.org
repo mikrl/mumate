@@ -1,0 +1,20 @@
+#+TITLE: Todo list and roadmap for mumate
+#+AUTHOR: Michael Lynch
+#+DATE: [2020-01-26 Sun]
+
+* Refactor code [0/3]
+  - [ ] Split files into data, plotting, etc
+    - [ ] Make sure it plays nice with initial code
+    - [ ] Structure as a module
+  - [ ] Add utility to export to a pandas binary file
+  - [ ] Rewrite code to use pandas
+
+* Future development [/]
+    - [ ] Release as python module for handling vanilla mumax output [/]
+      - [ ] Come up with TODOs
+    - [ ] Create driver program to run simulations [0/3]
+      - [ ] Read config from yaml and build command string
+      - [ ] Fork mumax instance
+      - [ ] Consolidate data into one file as it comes
+	- [ ] Add metadata to file eg simulation time, steps, etc
+
