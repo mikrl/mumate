@@ -1,4 +1,4 @@
-import ovf2numpy
+from ovf2numpy import OVFReader
 import os
 import os.path as fs
 import re
@@ -1339,8 +1339,10 @@ def main(data_dir):
 
 
 	###			ACTUAL				###
+	ovf_reader = OVFReader(data_dir)
+	ovf_reader.import_dir()
+	ovf_files=ovf_reader.mag_data
 
-	ovf_files=ovf2numpy.import_dir(data_dir)#, which_files=(0*8901, 5*8901))
 	fourier_displacements(ovf_files, Bmin, Bmax, Bstep, tmin, tmax, tstep)
 	#helicoid_resonant_frequencies_plotter(ovf_files, Bmin, Bmax, Bstep, tmin, tmax, tstep)
 
