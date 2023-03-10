@@ -1,4 +1,3 @@
-from __future__ import division
 import ovf2numpy
 import os
 import os.path as fs
@@ -7,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import scipy.fftpack as spft
+import sys
 
 
 def coords_rotcoords(ovf_files, Bmin, Bmax, Bstep, tmin, tmax, tstep):
@@ -489,7 +489,7 @@ def helicoid_displacement_plotter(ovf_files):
 		#"""
 
 	except IOError as IO:	
-		print "No such file!"
+		print("No such file!")
 
 def helicoid_net_mag_plotter(ovf_files):
 	try:
@@ -547,7 +547,7 @@ def helicoid_net_mag_plotter(ovf_files):
 		
 		print("Net magnetisations plotted")
 	except IOError as IO:	
-		print "No such file!"
+		print("No such file!")
 
 
 def helicoid_resonant_frequencies_plotter(ovf_files):
@@ -1305,53 +1305,52 @@ def helicoid_resonant_frequencies_plotter(ovf_files):
 		print("Fourier Analysis done")
 
 	except IOError as IO:	
-		print "No such file!"
+		print("No such file!")
 
 
 
 
+def main(data_dir):
+	conjs=True
+	save_plot=True
+
+	Bmin=0.0
+	Bmax=0.95
+	Bstep=0.05
+	tmin=0.0
+	tmax=4450
+	tstep=8902
 
 
-data_directory=fs.abspath('./../HelicoidData/helicoidv9_mid.out/')
+	#"""
+	###		PREPARE FILESYSTEM FOR SAVING PLOTS	###
+	save_directory=data_dir[:-4]+"_plots_conjugates"#_h_trunc2"
+	save_directory_resonances=save_directory+"/fourier/"
+	save_directory_displacements=save_directory+"/displacements/"
 
-conjs=True
-save_plot=True
-
-Bmin=0.0
-Bmax=0.95
-Bstep=0.05
-tmin=0.0
-tmax=4450
-tstep=8902
-
-
-#"""
-###		PREPARE FILESYSTEM FOR SAVING PLOTS	###
-save_directory=data_directory[:-4]+"_plots_conjugates"#_h_trunc2"
-save_directory_resonances=save_directory+"/fourier/"
-save_directory_displacements=save_directory+"/displacements/"
-
-ls=os.listdir(fs.join(data_directory, '..'))
-if save_directory.split('/')[-1] not in ls:
-	print("creating directory ",save_directory)
-	os.mkdir(save_directory)	
-	os.mkdir(save_directory_displacements)
-	os.mkdir(save_directory_resonances)
-###########################################################
+	ls=os.listdir(fs.join(data_dir, '..'))
+	if save_directory.split('/')[-1] not in ls:
+		print("creating directory ",save_directory)
+		os.mkdir(save_directory)	
+		os.mkdir(save_directory_displacements)
+		os.mkdir(save_directory_resonances)
+	###########################################################
 
 
 
-###			ACTUAL				###
+	###			ACTUAL				###
 
-ovf_files=ovf2numpy.import_dir(data_directory)#, which_files=(0*8901, 5*8901))
-fourier_displacements(ovf_files, Bmin, Bmax, Bstep, tmin, tmax, tstep)
-#helicoid_resonant_frequencies_plotter(ovf_files, Bmin, Bmax, Bstep, tmin, tmax, tstep)
+	ovf_files=ovf2numpy.import_dir(data_dir)#, which_files=(0*8901, 5*8901))
+	fourier_displacements(ovf_files, Bmin, Bmax, Bstep, tmin, tmax, tstep)
+	#helicoid_resonant_frequencies_plotter(ovf_files, Bmin, Bmax, Bstep, tmin, tmax, tstep)
 
-###							###
-#"""
-# THIS ONE FLIPS THE SIGNS OF ALL THE IMAGINARY PARTS OF THE COMPLEX NUMBERS IF THEYRE LESS THAN ZERO
+	###							###
+	#"""
+	# THIS ONE FLIPS THE SIGNS OF ALL THE IMAGINARY PARTS OF THE COMPLEX NUMBERS IF THEYRE LESS THAN ZERO
 
-print("Done!")
+	print("Done!")
 
+if __name__ == '__main__':
+	main(*sys.argv[1:])
 
 
